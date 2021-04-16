@@ -27,7 +27,7 @@ func Test_parseAndRunPrompts(t *testing.T) {
 		{
 			name: "Should return data if no error occurs",
 			mocks: mocks{
-				prompts: []*prompt.Entry{&prompt.Entry{Name: "a"}, &prompt.Entry{Name: "b"}},
+				prompts: []*prompt.Entry{{Name: "a"}, {Name: "b"}},
 			},
 			args: args{
 				promptsConfigPath: "some-no-error-path",
