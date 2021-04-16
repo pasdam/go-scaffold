@@ -7,7 +7,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pasdam/go-io-utilx/pkg/ioutilx"
 	"github.com/pasdam/go-scaffold/pkg/filters"
 	"github.com/pasdam/go-scaffold/pkg/scaffold"
 	"github.com/stretchr/testify/assert"
@@ -16,7 +15,7 @@ import (
 
 func Test_NewFileSystemProvider_Fail_FolderDoesNotExist(t *testing.T) {
 	var filter filters.Filter
-	processor := newMockFileProcessor()
+	processor := newMockFileProcessor(t)
 
 	provider := scaffold.NewFileSystemProvider("some-non-existing-folder")
 	err := provider.ProvideFiles(filter, processor)
@@ -25,7 +24,7 @@ func Test_NewFileSystemProvider_Fail_FolderDoesNotExist(t *testing.T) {
 
 func TestFileSystemProvider_ProvideFiles_Fail_ShouldProcessAllFileIfNoFilterIsSpecified(t *testing.T) {
 	var filter filters.Filter
-	processor := newMockFileProcessor()
+	processor := newMockFileProcessor(t)
 	expectedErr := errors.New("some-error")
 	processor.On("ProcessFile", mock.Anything, mock.Anything).Return(expectedErr)
 
@@ -38,7 +37,7 @@ func TestFileSystemProvider_ProvideFiles_Fail_ShouldProcessAllFileIfNoFilterIsSp
 
 func TestFileSystemProvider_ProvideFiles_Success_ShouldProcessAllFileIfNoFilterIsSpecified(t *testing.T) {
 	var filter filters.Filter
-	processor := newMockFileProcessor()
+	processor := newMockFileProcessor(t)
 	processor.On("ProcessFile", mock.Anything, mock.Anything).Return(nil)
 
 	provider := scaffold.NewFileSystemProvider(filepath.Join("testdata", "file_system_provider"))
@@ -53,7 +52,7 @@ func TestFileSystemProvider_ProvideFiles_Success_ShouldProcessAllFileIfNoFilterI
 
 func TestFileSystemProvider_ProvideFiles_Success_ShouldProcessAllFileIfFilterAcceptsAll(t *testing.T) {
 	filter := &mockFilter{File: "no-file-will-match"}
-	processor := newMockFileProcessor()
+	processor := newMockFileProcessor(t)
 	processor.On("ProcessFile", mock.Anything, mock.Anything).Return(nil)
 
 	provider := scaffold.NewFileSystemProvider(filepath.Join("testdata", "file_system_provider"))
@@ -68,7 +67,7 @@ func TestFileSystemProvider_ProvideFiles_Success_ShouldProcessAllFileIfFilterAcc
 
 func TestFileSystemProvider_ProvideFiles_Success_ShouldNotProcessFilesIgnoredByTheFilter(t *testing.T) {
 	filter := &mockFilter{File: "file0"}
-	processor := newMockFileProcessor()
+	processor := newMockFileProcessor(t)
 	processor.On("ProcessFile", mock.Anything, mock.Anything).Return(nil)
 
 	provider := scaffold.NewFileSystemProvider(filepath.Join("testdata", "file_system_provider"))
@@ -102,18 +101,22 @@ func (m *mockFilter) Accept(filePath string) bool {
 
 type mockFileProcessor struct {
 	mock.Mock
+	t *testing.T
 
 	ReadersMap map[string]string
 }
 
-func newMockFileProcessor() *mockFileProcessor {
+func newMockFileProcessor(t *testing.T) *mockFileProcessor {
 	return &mockFileProcessor{
+		t:          t,
 		ReadersMap: make(map[string]string),
 	}
 }
 
 func (p *mockFileProcessor) ProcessFile(filePath string, reader io.Reader) error {
-	p.ReadersMap[filePath] = ioutilx.ReaderToString(reader)
+	content, err := io.ReadAll(reader)
+	assert.NoError(p.t, err)
+	p.ReadersMap[filePath] = string(content)
 	args := p.Called(filePath, reader)
 	return args.Error(0)
 }
