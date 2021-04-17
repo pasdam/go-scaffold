@@ -13,11 +13,14 @@ func Run() {
 	options := readOptions(errHandler)
 	data := parseAndRunPrompts(options.PromptsConfigPath(), errHandler)
 
-	processInPlace := options.TemplatePath == options.OutputPath
+	if options.TemplatePath == options.OutputPath {
+		log.Fatal("Can't generate file in the input folder, please specify an output directory")
+		return
+	}
+
 	templateHelper := &scaffold.TemplateHelper{}
 
 	fileProcessor := newProcessPipeline(
-		processInPlace,
 		data,
 		string(options.TemplatePath),
 		string(options.OutputPath),

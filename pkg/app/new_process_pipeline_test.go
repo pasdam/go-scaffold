@@ -6,14 +6,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/otiai10/copy"
 	"github.com/pasdam/go-files-test/pkg/filestest"
 	"github.com/pasdam/go-scaffold/pkg/scaffold"
 	"github.com/pasdam/mockit/mockit"
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_newProcessPipeline_ShouldNotIncludeCleanupPipelineIfProcessIsNotInPlace(t *testing.T) {
+func Test_newProcessPipeline_ShouldProcessFilesCorrectly(t *testing.T) {
 	data := make(map[string]interface{})
 	data["text"] = "test!!"
 	outDir := filestest.TempDir(t)
@@ -21,30 +20,12 @@ func Test_newProcessPipeline_ShouldNotIncludeCleanupPipelineIfProcessIsNotInPlac
 		t.Fail() // errors should not occur
 	}
 	srcDir := filepath.Join("testdata", "valid_template")
-	got := newProcessPipeline(false, data, srcDir, outDir, &scaffold.TemplateHelper{}, errHandler)
+	got := newProcessPipeline(data, srcDir, outDir, &scaffold.TemplateHelper{}, errHandler)
 
 	path := "file.txt.tpl"
 	got.ProcessFile(path, strings.NewReader("This is a {{ .text }}\n"))
 
 	filestest.FileExistsWithContent(t, filepath.Join(srcDir, path), "This is a {{ .text }}\n")
-	filestest.FileExistsWithContent(t, filepath.Join(outDir, "file.txt"), "This is a test!!\n")
-}
-
-func Test_newProcessPipeline_ShouldIncludeCleanupPipelineIfProcessIsInPlace(t *testing.T) {
-	data := make(map[string]interface{})
-	data["text"] = "test!!"
-	outDir := filestest.TempDir(t)
-	errHandler := func(v ...interface{}) {
-		t.Fail() // errors should not occur
-	}
-	srcDir := filepath.Join("testdata", "valid_template")
-	got := newProcessPipeline(true, data, outDir, outDir, &scaffold.TemplateHelper{}, errHandler)
-	copy.Copy(srcDir, outDir)
-
-	path := "file.txt.tpl"
-	got.ProcessFile(path, strings.NewReader("This is a {{ .text }}\n"))
-
-	filestest.PathDoesNotExist(t, filepath.Join(outDir, path))
 	filestest.FileExistsWithContent(t, filepath.Join(outDir, "file.txt"), "This is a test!!\n")
 }
 
@@ -54,10 +35,9 @@ func Test_newProcessPipeline_ShouldReturnErrorIfOneOccurWhileCreatingThePipeline
 		cleanPipelineErr error
 	}
 	type args struct {
-		inPlace bool
-		config  interface{}
-		srcDir  string
-		outDir  string
+		config interface{}
+		srcDir string
+		outDir string
 	}
 	tests := []struct {
 		name  string
@@ -70,22 +50,9 @@ func Test_newProcessPipeline_ShouldReturnErrorIfOneOccurWhileCreatingThePipeline
 				outPipelineErr: errors.New("some-out-pipeline-error"),
 			},
 			args: args{
-				inPlace: false,
-				config:  "some-out-pipeline-error-data",
-				srcDir:  "some-out-pipeline-error-source-dir",
-				outDir:  "some-out-pipeline-error-output-dir",
-			},
-		},
-		{
-			name: "Should return error if one occurs while creating cleanup pipeline",
-			mocks: mocks{
-				cleanPipelineErr: errors.New("some-cleanup-pipeline-error"),
-			},
-			args: args{
-				inPlace: true,
-				config:  "some-cleanup-pipeline-error-data",
-				srcDir:  "some-cleanup-pipeline-error-source-dir",
-				outDir:  "some-cleanup-pipeline-error-output-dir",
+				config: "some-out-pipeline-error-data",
+				srcDir: "some-out-pipeline-error-source-dir",
+				outDir: "some-out-pipeline-error-output-dir",
 			},
 		},
 	}
@@ -101,13 +68,12 @@ func Test_newProcessPipeline_ShouldReturnErrorIfOneOccurWhileCreatingThePipeline
 				assert.Equal(t, wantErr, v[1])
 			}
 
-			mockit.MockFunc(t, newOutputPipeline).With(tt.args.inPlace, tt.args.config, tt.args.outDir, helper).Return(nil, tt.mocks.outPipelineErr)
-			mockit.MockFunc(t, newCleanupPipeline).With(tt.args.srcDir).Return(nil, tt.mocks.cleanPipelineErr)
+			mockit.MockFunc(t, newOutputPipeline).With(tt.args.config, tt.args.outDir, helper).Return(nil, tt.mocks.outPipelineErr)
 			if tt.mocks.cleanPipelineErr != nil {
 				wantErr = tt.mocks.cleanPipelineErr
 			}
 
-			got := newProcessPipeline(tt.args.inPlace, tt.args.config, tt.args.srcDir, tt.args.outDir, helper, errHandler)
+			got := newProcessPipeline(tt.args.config, tt.args.srcDir, tt.args.outDir, helper, errHandler)
 
 			assert.True(t, errorOccurred)
 			assert.Nil(t, got)

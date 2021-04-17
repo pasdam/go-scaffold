@@ -9,7 +9,6 @@ import (
 // Options contains the app run configuration
 type Options struct {
 	OutputPath   flags.Filename `short:"o" long:"output" description:"Path of the output dir, if not specified the template will be generated in place" default:"./"`
-	RemoveSource bool           `short:"r" long:"remove-source" description:"Flag to indicate whether remove the template and config files, or not. This has effect only if the input and output folder are the same"`
 	TemplatePath flags.Filename `short:"t" long:"template" description:"Path of the template folder" default:"./"`
 }
 

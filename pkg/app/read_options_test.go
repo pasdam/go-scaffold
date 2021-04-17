@@ -23,7 +23,6 @@ func Test_readOptions(t *testing.T) {
 			mocks: mocks{},
 			want: &config.Options{
 				OutputPath:   "some-out-path",
-				RemoveSource: true,
 				TemplatePath: "some-template-path",
 			},
 		},
