@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/pasdam/go-io-utilx/pkg/ioutilx"
+	"github.com/pasdam/go-scaffold/pkg/core"
 	"github.com/pasdam/mockit/mockit"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,7 +16,7 @@ import (
 func TestNewWriteProcessor(t *testing.T) {
 	tests := []struct {
 		name string
-		want Processor
+		want core.Processor
 	}{
 		{
 			name: "Should create instance",

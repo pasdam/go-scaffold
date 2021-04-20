@@ -6,14 +6,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pasdam/go-scaffold/pkg/filters"
+	"github.com/pasdam/go-scaffold/pkg/core"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewFilterProcessor(t *testing.T) {
 	type args struct {
-		filter        filters.Filter
-		nextProcessor Processor
+		filter        core.Filter
+		nextProcessor core.Processor
 	}
 	tests := []struct {
 		name string

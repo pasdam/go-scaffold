@@ -7,8 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/pasdam/go-scaffold/pkg/filters"
-	"github.com/pasdam/go-scaffold/pkg/processors"
+	"github.com/pasdam/go-scaffold/pkg/core"
 )
 
 type fileSystemProvider struct {
@@ -19,13 +18,13 @@ type fileSystemProvider struct {
 
 // NewFileSystemProvider creates a new instance of a FileProvider that reads
 // file from the filesystem.
-func NewFileSystemProvider(inputDir string) FileProvider {
+func NewFileSystemProvider(inputDir string) core.FileProvider {
 	return &fileSystemProvider{
 		inputDir: inputDir,
 	}
 }
 
-func (p *fileSystemProvider) ProvideFiles(filesFilter filters.Filter, processor processors.Processor) error {
+func (p *fileSystemProvider) ProvideFiles(filesFilter core.Filter, processor core.Processor) error {
 	err := p.indexDir(p.inputDir)
 	if err != nil {
 		return err

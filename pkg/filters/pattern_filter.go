@@ -2,6 +2,8 @@ package filters
 
 import (
 	"regexp"
+
+	"github.com/pasdam/go-scaffold/pkg/core"
 )
 
 type patternFilter struct {
@@ -14,7 +16,7 @@ type patternFilter struct {
 // The filter accept a string if it is inclusive and the value matches one of
 // the regexp, of if it is exclusive (inclusive=false) and the value doesn't
 // match any of the patterns.
-func NewPatternFilter(inclusive bool, patterns ...string) (Filter, error) {
+func NewPatternFilter(inclusive bool, patterns ...string) (core.Filter, error) {
 	regExps := make([]*regexp.Regexp, len(patterns))
 
 	for i := 0; i < len(patterns); i++ {
@@ -33,7 +35,7 @@ func NewPatternFilter(inclusive bool, patterns ...string) (Filter, error) {
 
 // NewPatternFilterFromInstance duplicates the filter, using the same pattern(s)
 // and the specified inclusive flag
-func NewPatternFilterFromInstance(f Filter, inclusive bool) Filter {
+func NewPatternFilterFromInstance(f core.Filter, inclusive bool) core.Filter {
 	return &patternFilter{
 		patterns:  f.(*patternFilter).patterns,
 		inclusive: inclusive,

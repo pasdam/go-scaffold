@@ -3,18 +3,18 @@ package processors
 import (
 	"io"
 
-	"github.com/pasdam/go-scaffold/pkg/filters"
+	"github.com/pasdam/go-scaffold/pkg/core"
 )
 
 type filterProcessor struct {
-	filter        filters.Filter
-	nextProcessor Processor
+	filter        core.Filter
+	nextProcessor core.Processor
 }
 
 // NewFilterProcessor creates a new Processor that pass the file down to the
 // specified nextProcessor when it matches the filter, it ignore the file
 // otherwise
-func NewFilterProcessor(filter filters.Filter, nextProcessor Processor) Processor {
+func NewFilterProcessor(filter core.Filter, nextProcessor core.Processor) core.Processor {
 	return &filterProcessor{
 		filter:        filter,
 		nextProcessor: nextProcessor,

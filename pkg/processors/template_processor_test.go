@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/pasdam/go-scaffold/pkg/core"
 	"github.com/pasdam/go-scaffold/pkg/templates"
 	"github.com/pasdam/mockit/mockit"
 	"github.com/stretchr/testify/assert"
@@ -14,7 +15,7 @@ import (
 func TestNewTemplateProcessor(t *testing.T) {
 	type args struct {
 		data          interface{}
-		nextProcessor Processor
+		nextProcessor core.Processor
 	}
 	tests := []struct {
 		name string

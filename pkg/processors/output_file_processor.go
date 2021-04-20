@@ -3,17 +3,19 @@ package processors
 import (
 	"io"
 	"path/filepath"
+
+	"github.com/pasdam/go-scaffold/pkg/core"
 )
 
 type outputFileProcessor struct {
 	outDir             string
-	tempplateProcessor Processor
+	tempplateProcessor core.Processor
 }
 
 // NewOutputFileProcessor creates a new instance of a FileProcessor that process
 // templates and creates the output files.
 // THe variables to use for the template are in config.
-func NewOutputFileProcessor(config interface{}, outDir string) Processor {
+func NewOutputFileProcessor(config interface{}, outDir string) core.Processor {
 	writeProcessor := NewWriteProcessor()
 	templateProcessor := NewTemplateProcessor(config, writeProcessor)
 

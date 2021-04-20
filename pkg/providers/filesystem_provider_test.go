@@ -7,14 +7,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pasdam/go-scaffold/pkg/filters"
+	"github.com/pasdam/go-scaffold/pkg/core"
 	"github.com/pasdam/go-scaffold/pkg/providers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
 func Test_NewFileSystemProvider_Fail_FolderDoesNotExist(t *testing.T) {
-	var filter filters.Filter
+	var filter core.Filter
 	processor := newMockFileProcessor(t)
 
 	provider := providers.NewFileSystemProvider("some-non-existing-folder")
@@ -23,7 +23,7 @@ func Test_NewFileSystemProvider_Fail_FolderDoesNotExist(t *testing.T) {
 }
 
 func TestFileSystemProvider_ProvideFiles_Fail_ShouldProcessAllFileIfNoFilterIsSpecified(t *testing.T) {
-	var filter filters.Filter
+	var filter core.Filter
 	processor := newMockFileProcessor(t)
 	expectedErr := errors.New("some-error")
 	processor.On("ProcessFile", mock.Anything, mock.Anything).Return(expectedErr)
@@ -36,7 +36,7 @@ func TestFileSystemProvider_ProvideFiles_Fail_ShouldProcessAllFileIfNoFilterIsSp
 }
 
 func TestFileSystemProvider_ProvideFiles_Success_ShouldProcessAllFileIfNoFilterIsSpecified(t *testing.T) {
-	var filter filters.Filter
+	var filter core.Filter
 	processor := newMockFileProcessor(t)
 	processor.On("ProcessFile", mock.Anything, mock.Anything).Return(nil)
 

@@ -1,8 +1,12 @@
 package filters
 
+import (
+	"github.com/pasdam/go-scaffold/pkg/core"
+)
+
 type noOpFilter struct{}
 
-func NewNoOpFilter() Filter {
+func NewNoOpFilter() core.Filter {
 	return &noOpFilter{}
 }
 
