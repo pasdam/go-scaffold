@@ -5,82 +5,13 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jessevdk/go-flags"
 	"github.com/pasdam/go-scaffold/pkg/config"
-	"github.com/stretchr/testify/assert"
 )
-
-func Test_ParseCLIOptions_fail_shouldReturnErrorIfAnInvalidParameterIsSpecifiedSpecified(t *testing.T) {
-	templateDir := "some-template-dir"
-	oldArgs := mockArguments(false, templateDir, "")
-	defer func() { os.Args = oldArgs }()
-	os.Args = append(os.Args, "--invalid-param")
-
-	options, err := config.ParseCLIOptions()
-
-	assert.NotNil(t, err)
-	assert.Equal(t, "unknown flag `invalid-param'", err.Error())
-	assert.Nil(t, options)
-}
-
-func Test_ParseCLIOptions_success_shouldUseDefaultOutputPath(t *testing.T) {
-	templateDir := "some-template-dir"
-	oldArgs := mockArguments(false, templateDir, "")
-	defer func() { os.Args = oldArgs }()
-
-	options, err := config.ParseCLIOptions()
-
-	assert.Nil(t, err)
-	assert.NotNil(t, options)
-	assert.Equal(t, "./", string(options.OutputPath))
-	assert.Equal(t, templateDir, string(options.TemplateRootPath))
-}
-
-func Test_ParseCLIOptions_success_shouldUseDefaultTemplatePath(t *testing.T) {
-	outDir := "some-output-dir"
-	oldArgs := mockArguments(false, "", outDir)
-	defer func() { os.Args = oldArgs }()
-
-	options, err := config.ParseCLIOptions()
-
-	assert.Nil(t, err)
-	assert.NotNil(t, options)
-	assert.Equal(t, outDir, string(options.OutputPath))
-	assert.Equal(t, "./", string(options.TemplateRootPath))
-}
-
-func Test_ParseCLIOptions_success_shouldParseOptionsWithLongFlags(t *testing.T) {
-	templateDir := "some-template-dir"
-	outDir := "some-output-dir"
-	oldArgs := mockArguments(true, templateDir, outDir)
-	defer func() { os.Args = oldArgs }()
-
-	options, err := config.ParseCLIOptions()
-
-	assert.Nil(t, err)
-	assert.NotNil(t, options)
-	assert.Equal(t, templateDir, string(options.TemplateRootPath))
-	assert.Equal(t, outDir, string(options.OutputPath))
-}
-
-func Test_ParseCLIOptions_success_shouldParseOptionsWithShortFlags(t *testing.T) {
-	templateDir := "some-template-dir"
-	outDir := "some-output-dir"
-	oldArgs := mockArguments(false, templateDir, outDir)
-	defer func() { os.Args = oldArgs }()
-
-	options, err := config.ParseCLIOptions()
-
-	assert.Nil(t, err)
-	assert.NotNil(t, options)
-	assert.Equal(t, templateDir, string(options.TemplateRootPath))
-	assert.Equal(t, outDir, string(options.OutputPath))
-}
 
 func TestOptions_ManifestPath(t *testing.T) {
 	type fields struct {
-		OutputPath       flags.Filename
-		TemplateRootPath flags.Filename
+		OutputPath       string
+		TemplateRootPath string
 		Values           []string
 	}
 	tests := []struct {
@@ -110,8 +41,8 @@ func TestOptions_ManifestPath(t *testing.T) {
 
 func TestOptions_TemplateDirPath(t *testing.T) {
 	type fields struct {
-		OutputPath       flags.Filename
-		TemplateRootPath flags.Filename
+		OutputPath       string
+		TemplateRootPath string
 		Values           []string
 	}
 	tests := []struct {
@@ -141,8 +72,8 @@ func TestOptions_TemplateDirPath(t *testing.T) {
 
 func TestOptions_ValuesPath(t *testing.T) {
 	type fields struct {
-		OutputPath       flags.Filename
-		TemplateRootPath flags.Filename
+		OutputPath       string
+		TemplateRootPath string
 		Values           []string
 	}
 	tests := []struct {

@@ -8,6 +8,8 @@ include scripts/makefiles/third_party/pasdam/makefiles/help.mk
 
 .DEFAULT_GOAL := help
 
+GO_MAIN_DIR := ./cmd/cli
+
 ## clean: Remove all artifacts
 .PHONY: clean
 clean: go-clean docker-clean

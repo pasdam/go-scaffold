@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 
+	"github.com/pasdam/go-scaffold/pkg/config"
 	"github.com/pasdam/go-scaffold/pkg/providers"
 	"github.com/pasdam/go-template-map-loader/pkg/tm"
 )
@@ -10,9 +11,7 @@ import (
 var errHandler = log.Fatal
 
 // Run starts the app
-func Run() {
-	options := readOptions(errHandler)
-
+func Run(options *config.Options) {
 	if options.TemplateRootPath == options.OutputPath {
 		log.Fatal("Can't generate file in the input folder, please specify an output directory")
 		return

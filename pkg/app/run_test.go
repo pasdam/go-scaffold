@@ -1,20 +1,19 @@
 package app
 
 import (
-	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/pasdam/go-files-test/pkg/filestest"
+	"github.com/pasdam/go-scaffold/pkg/config"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_Run_Success_ValidTemplate(t *testing.T) {
 	outDir := filestest.TempDir(t)
-	oldArgs := mockArguments(filepath.Join("testdata", "valid_template"), outDir)
-	defer func() { os.Args = oldArgs }()
+	options := mockOptions(filepath.Join("testdata", "valid_template"), outDir)
 
-	Run()
+	Run(options)
 
 	filestest.FileExistsWithContent(t, filepath.Join("testdata", "valid_template", "template", "file.txt"), "This is a {{ .Values.text }}\n")
 	filestest.FileExistsWithContent(t, filepath.Join("testdata", "valid_template", "template", "normal_file.txt"), "normal-file-content\n")
@@ -24,10 +23,9 @@ func Test_Run_Success_ValidTemplate(t *testing.T) {
 
 func Test_Run_Success_ShouldNotRemoveSourceIfOptionIsSetButProcessIsNotInPlace(t *testing.T) {
 	outDir := filestest.TempDir(t)
-	oldArgs := mockArguments(filepath.Join("testdata", "valid_template"), outDir)
-	defer func() { os.Args = oldArgs }()
+	options := mockOptions(filepath.Join("testdata", "valid_template"), outDir)
 
-	Run()
+	Run(options)
 
 	filestest.FileExistsWithContent(t, filepath.Join("testdata", "valid_template", "template", "file.txt"), "This is a {{ .Values.text }}\n")
 	filestest.FileExistsWithContent(t, filepath.Join("testdata", "valid_template", "template", "normal_file.txt"), "normal-file-content\n")
@@ -46,23 +44,16 @@ func Test_Run_Fail_ErrorWhileProcessingFiles(t *testing.T) {
 
 	outDir := filestest.TempDir(t)
 
-	oldArgs := mockArguments(filepath.Join("testdata", "invalid_template"), outDir)
-	defer func() { os.Args = oldArgs }()
+	options := mockOptions(filepath.Join("testdata", "invalid_template"), outDir)
 
-	Run()
+	Run(options)
 
 	assert.True(t, called)
 }
 
-func mockArguments(templateDir string, outDir string) []string {
-	oldArgs := os.Args
-
-	os.Args = make([]string, 7)
-	os.Args[0] = ""
-	os.Args[1] = "--template"
-	os.Args[2] = templateDir
-	os.Args[3] = "--output"
-	os.Args[4] = outDir
-
-	return oldArgs
+func mockOptions(templateDir string, outDir string) *config.Options {
+	return &config.Options{
+		TemplateRootPath: templateDir,
+		OutputPath:       outDir,
+	}
 }
