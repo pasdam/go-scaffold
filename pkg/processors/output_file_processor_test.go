@@ -1,4 +1,4 @@
-package scaffold_test
+package processors_test
 
 import (
 	"os"
@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/pasdam/go-files-test/pkg/filestest"
-	"github.com/pasdam/go-scaffold/pkg/scaffold"
+	"github.com/pasdam/go-scaffold/pkg/processors"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +17,7 @@ func TestOutputFileProcessor_ProcessFile_Fail_ApplyTemplateFails(t *testing.T) {
 	assert.Nil(t, err)
 	defer file.Close()
 
-	processor := scaffold.NewOutputFileProcessor(
+	processor := processors.NewOutputFileProcessor(
 		"invalid-data",
 		outDir,
 	)
@@ -34,7 +34,7 @@ func TestOutputFileProcessor_ProcessFile_Success_FileIsATemplate(t *testing.T) {
 	assert.Nil(t, err)
 	defer file.Close()
 
-	processor := scaffold.NewOutputFileProcessor(
+	processor := processors.NewOutputFileProcessor(
 		struct{ Text string }{Text: "*test*"},
 		outDir,
 	)
@@ -51,7 +51,7 @@ func TestOutputFileProcessor_ProcessFile_Success_FileIsNotATemplate(t *testing.T
 	assert.Nil(t, err)
 	defer file.Close()
 
-	processor := scaffold.NewOutputFileProcessor(
+	processor := processors.NewOutputFileProcessor(
 		nil,
 		outDir,
 	)
