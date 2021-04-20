@@ -6,8 +6,8 @@ import (
 	"github.com/pasdam/go-scaffold/pkg/scaffold"
 )
 
-func newOutputPipeline(config interface{}, outDir string, templateHelper *scaffold.TemplateHelper) (processors.Processor, error) {
+func newOutputPipeline(config interface{}, outDir string) (processors.Processor, error) {
 	filter := filters.NewNoOpFilter()
-	outProcessor := scaffold.NewOutputFileProcessor(config, outDir, templateHelper)
+	outProcessor := scaffold.NewOutputFileProcessor(config, outDir)
 	return processors.NewFilterProcessor(filter, outProcessor), nil
 }

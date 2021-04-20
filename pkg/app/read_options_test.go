@@ -22,8 +22,8 @@ func Test_readOptions(t *testing.T) {
 			name:  "Should return parsed options",
 			mocks: mocks{},
 			want: &config.Options{
-				OutputPath:   "some-out-path",
-				TemplatePath: "some-template-path",
+				OutputPath:       "some-out-path",
+				TemplateRootPath: "some-template-path",
 			},
 		},
 		{

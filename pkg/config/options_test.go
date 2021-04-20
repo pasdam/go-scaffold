@@ -33,7 +33,7 @@ func Test_ParseCLIOptions_success_shouldUseDefaultOutputPath(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, options)
 	assert.Equal(t, "./", string(options.OutputPath))
-	assert.Equal(t, templateDir, string(options.TemplatePath))
+	assert.Equal(t, templateDir, string(options.TemplateRootPath))
 }
 
 func Test_ParseCLIOptions_success_shouldUseDefaultTemplatePath(t *testing.T) {
@@ -46,7 +46,7 @@ func Test_ParseCLIOptions_success_shouldUseDefaultTemplatePath(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, options)
 	assert.Equal(t, outDir, string(options.OutputPath))
-	assert.Equal(t, "./", string(options.TemplatePath))
+	assert.Equal(t, "./", string(options.TemplateRootPath))
 }
 
 func Test_ParseCLIOptions_success_shouldParseOptionsWithLongFlags(t *testing.T) {
@@ -59,7 +59,7 @@ func Test_ParseCLIOptions_success_shouldParseOptionsWithLongFlags(t *testing.T) 
 
 	assert.Nil(t, err)
 	assert.NotNil(t, options)
-	assert.Equal(t, templateDir, string(options.TemplatePath))
+	assert.Equal(t, templateDir, string(options.TemplateRootPath))
 	assert.Equal(t, outDir, string(options.OutputPath))
 }
 
@@ -73,8 +73,101 @@ func Test_ParseCLIOptions_success_shouldParseOptionsWithShortFlags(t *testing.T)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, options)
-	assert.Equal(t, templateDir, string(options.TemplatePath))
+	assert.Equal(t, templateDir, string(options.TemplateRootPath))
 	assert.Equal(t, outDir, string(options.OutputPath))
+}
+
+func TestOptions_ManifestPath(t *testing.T) {
+	type fields struct {
+		OutputPath       flags.Filename
+		TemplateRootPath flags.Filename
+		Values           []string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			name:   "Should return expected value",
+			fields: fields{TemplateRootPath: "manifest-test"},
+			want:   filepath.Join("manifest-test", "Manifest.yaml"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			o := &config.Options{
+				OutputPath:       tt.fields.OutputPath,
+				TemplateRootPath: tt.fields.TemplateRootPath,
+				Values:           tt.fields.Values,
+			}
+			if got := o.ManifestPath(); got != tt.want {
+				t.Errorf("Options.ManifestPath() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestOptions_TemplateDirPath(t *testing.T) {
+	type fields struct {
+		OutputPath       flags.Filename
+		TemplateRootPath flags.Filename
+		Values           []string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			name:   "Should return expected value",
+			fields: fields{TemplateRootPath: "template-test"},
+			want:   filepath.Join("template-test", "template"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			o := &config.Options{
+				OutputPath:       tt.fields.OutputPath,
+				TemplateRootPath: tt.fields.TemplateRootPath,
+				Values:           tt.fields.Values,
+			}
+			if got := o.TemplateDirPath(); got != tt.want {
+				t.Errorf("Options.TemplateDirPath() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestOptions_ValuesPath(t *testing.T) {
+	type fields struct {
+		OutputPath       flags.Filename
+		TemplateRootPath flags.Filename
+		Values           []string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			name:   "Should return expected value",
+			fields: fields{TemplateRootPath: "values-test"},
+			want:   filepath.Join("values-test", "values.yaml"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			o := &config.Options{
+				OutputPath:       tt.fields.OutputPath,
+				TemplateRootPath: tt.fields.TemplateRootPath,
+				Values:           tt.fields.Values,
+			}
+			if got := o.ValuesPath(); got != tt.want {
+				t.Errorf("Options.ValuesPath() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
 
 func mockArguments(useLongFlags bool, templateDir string, outDir string) []string {
@@ -100,85 +193,4 @@ func mockArguments(useLongFlags bool, templateDir string, outDir string) []strin
 	}
 
 	return oldArgs
-}
-
-func TestOptions_ConfigDirPath(t *testing.T) {
-	type fields struct {
-		TemplatePath flags.Filename
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{
-			name:   "Should return expected value",
-			fields: fields{TemplatePath: "some-path-1"},
-			want:   filepath.Join("some-path-1", ".go-scaffold"),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			o := &config.Options{
-				TemplatePath: tt.fields.TemplatePath,
-			}
-			if got := o.ConfigDirPath(); got != tt.want {
-				t.Errorf("Options.ConfigDirPath() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestOptions_InitScriptPath(t *testing.T) {
-	type fields struct {
-		TemplatePath flags.Filename
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{
-			name:   "Should return expected value",
-			fields: fields{TemplatePath: "some-path-1"},
-			want:   filepath.Join("some-path-1", ".go-scaffold", "initScript"),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			o := &config.Options{
-				TemplatePath: tt.fields.TemplatePath,
-			}
-			if got := o.InitScriptPath(); got != tt.want {
-				t.Errorf("Options.InitScriptPath() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestOptions_PromptsConfigPath(t *testing.T) {
-	type fields struct {
-		TemplatePath flags.Filename
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{
-			name:   "Should return expected value",
-			fields: fields{TemplatePath: "some-path-1"},
-			want:   filepath.Join("some-path-1", ".go-scaffold", "prompts.yaml"),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			o := &config.Options{
-				TemplatePath: tt.fields.TemplatePath,
-			}
-			if got := o.PromptsConfigPath(); got != tt.want {
-				t.Errorf("Options.PromptsConfigPath() = %v, want %v", got, tt.want)
-			}
-		})
-	}
 }

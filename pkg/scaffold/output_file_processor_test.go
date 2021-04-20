@@ -20,7 +20,6 @@ func TestOutputFileProcessor_ProcessFile_Fail_ApplyTemplateFails(t *testing.T) {
 	processor := scaffold.NewOutputFileProcessor(
 		"invalid-data",
 		outDir,
-		&scaffold.TemplateHelper{},
 	)
 	err = processor.ProcessFile("template_file.tpl", file)
 
@@ -38,12 +37,11 @@ func TestOutputFileProcessor_ProcessFile_Success_FileIsATemplate(t *testing.T) {
 	processor := scaffold.NewOutputFileProcessor(
 		struct{ Text string }{Text: "*test*"},
 		outDir,
-		&scaffold.TemplateHelper{},
 	)
 	err = processor.ProcessFile("template_file.tpl", file)
 
 	assert.Nil(t, err)
-	filestest.FileExistsWithContent(t, filepath.Join(outDir, "template_file"), "This is a *test*\n")
+	filestest.FileExistsWithContent(t, filepath.Join(outDir, "template_file.tpl"), "This is a *test*\n")
 }
 
 func TestOutputFileProcessor_ProcessFile_Success_FileIsNotATemplate(t *testing.T) {
@@ -56,7 +54,6 @@ func TestOutputFileProcessor_ProcessFile_Success_FileIsNotATemplate(t *testing.T
 	processor := scaffold.NewOutputFileProcessor(
 		nil,
 		outDir,
-		&scaffold.TemplateHelper{},
 	)
 	err = processor.ProcessFile("regular_file.txt", file)
 

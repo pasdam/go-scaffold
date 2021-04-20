@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/pasdam/go-files-test/pkg/filestest"
-	"github.com/pasdam/go-scaffold/pkg/scaffold"
 	"github.com/pasdam/mockit/mockit"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,13 +18,13 @@ func Test_newProcessPipeline_ShouldProcessFilesCorrectly(t *testing.T) {
 	errHandler := func(v ...interface{}) {
 		t.Fail() // errors should not occur
 	}
-	srcDir := filepath.Join("testdata", "valid_template")
-	got := newProcessPipeline(data, srcDir, outDir, &scaffold.TemplateHelper{}, errHandler)
+	srcDir := filepath.Join("testdata", "valid_template", "template")
+	got := newProcessPipeline(data, srcDir, outDir, errHandler)
 
-	path := "file.txt.tpl"
+	path := "file.txt"
 	got.ProcessFile(path, strings.NewReader("This is a {{ .text }}\n"))
 
-	filestest.FileExistsWithContent(t, filepath.Join(srcDir, path), "This is a {{ .text }}\n")
+	filestest.FileExistsWithContent(t, filepath.Join(srcDir, path), "This is a {{ .Values.text }}\n")
 	filestest.FileExistsWithContent(t, filepath.Join(outDir, "file.txt"), "This is a test!!\n")
 }
 
@@ -58,7 +57,6 @@ func Test_newProcessPipeline_ShouldReturnErrorIfOneOccurWhileCreatingThePipeline
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			helper := &scaffold.TemplateHelper{}
 			wantErr := tt.mocks.outPipelineErr
 			errorOccurred := false
 			errHandler := func(v ...interface{}) {
@@ -68,12 +66,12 @@ func Test_newProcessPipeline_ShouldReturnErrorIfOneOccurWhileCreatingThePipeline
 				assert.Equal(t, wantErr, v[1])
 			}
 
-			mockit.MockFunc(t, newOutputPipeline).With(tt.args.config, tt.args.outDir, helper).Return(nil, tt.mocks.outPipelineErr)
+			mockit.MockFunc(t, newOutputPipeline).With(tt.args.config, tt.args.outDir).Return(nil, tt.mocks.outPipelineErr)
 			if tt.mocks.cleanPipelineErr != nil {
 				wantErr = tt.mocks.cleanPipelineErr
 			}
 
-			got := newProcessPipeline(tt.args.config, tt.args.srcDir, tt.args.outDir, helper, errHandler)
+			got := newProcessPipeline(tt.args.config, tt.args.srcDir, tt.args.outDir, errHandler)
 
 			assert.True(t, errorOccurred)
 			assert.Nil(t, got)

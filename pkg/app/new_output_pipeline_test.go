@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/pasdam/go-files-test/pkg/filestest"
-	"github.com/pasdam/go-scaffold/pkg/scaffold"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -85,7 +84,7 @@ func Test_newOutputPipeline_ShouldProcessFileAsExpected(t *testing.T) {
 		{
 			name: "Should process template files",
 			args: args{
-				path:    "some-template-file.txt.tpl",
+				path:    "some-template-file.txt",
 				content: "some-template-file-content",
 			},
 			expect: expect{
@@ -96,7 +95,7 @@ func Test_newOutputPipeline_ShouldProcessFileAsExpected(t *testing.T) {
 		{
 			name: "Should process go-scaffold config files",
 			args: args{
-				path:    "some-template-file.txt.tpl",
+				path:    "some-template-file.txt",
 				content: "some-template-file-content",
 			},
 			expect: expect{
@@ -107,7 +106,7 @@ func Test_newOutputPipeline_ShouldProcessFileAsExpected(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := newOutputPipeline(data, outDir, &scaffold.TemplateHelper{})
+			got, err := newOutputPipeline(data, outDir)
 			assert.NotNil(t, got)
 			assert.Nil(t, err)
 

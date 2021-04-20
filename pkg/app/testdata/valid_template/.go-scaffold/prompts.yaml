@@ -1,5 +1,0 @@
-prompts:
-  - name: text
-    type: string
-    default: default-text
-    message: Enter text value
