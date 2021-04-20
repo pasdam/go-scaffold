@@ -3,7 +3,7 @@ package app
 import (
 	"log"
 
-	"github.com/pasdam/go-scaffold/pkg/scaffold"
+	"github.com/pasdam/go-scaffold/pkg/providers"
 	"github.com/pasdam/go-template-map-loader/pkg/tm"
 )
 
@@ -54,7 +54,7 @@ func Run() {
 		errHandler,
 	)
 
-	provider := scaffold.NewFileSystemProvider(string(options.TemplateDirPath()))
+	provider := providers.NewFileSystemProvider(string(options.TemplateDirPath()))
 	err = provider.ProvideFiles(nil, fileProcessor)
 	if err != nil {
 		errHandler("Error while processing files. ", err)

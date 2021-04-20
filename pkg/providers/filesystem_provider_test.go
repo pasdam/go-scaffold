@@ -1,4 +1,4 @@
-package scaffold_test
+package providers_test
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/pasdam/go-scaffold/pkg/filters"
-	"github.com/pasdam/go-scaffold/pkg/scaffold"
+	"github.com/pasdam/go-scaffold/pkg/providers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -17,7 +17,7 @@ func Test_NewFileSystemProvider_Fail_FolderDoesNotExist(t *testing.T) {
 	var filter filters.Filter
 	processor := newMockFileProcessor(t)
 
-	provider := scaffold.NewFileSystemProvider("some-non-existing-folder")
+	provider := providers.NewFileSystemProvider("some-non-existing-folder")
 	err := provider.ProvideFiles(filter, processor)
 	assert.Equal(t, "open some-non-existing-folder: no such file or directory", err.Error())
 }
@@ -28,7 +28,7 @@ func TestFileSystemProvider_ProvideFiles_Fail_ShouldProcessAllFileIfNoFilterIsSp
 	expectedErr := errors.New("some-error")
 	processor.On("ProcessFile", mock.Anything, mock.Anything).Return(expectedErr)
 
-	provider := scaffold.NewFileSystemProvider(filepath.Join("testdata", "file_system_provider"))
+	provider := providers.NewFileSystemProvider(filepath.Join("testdata", "file_system_provider"))
 	actualErr := provider.ProvideFiles(filter, processor)
 
 	assert.Equal(t, expectedErr, actualErr)
@@ -40,7 +40,7 @@ func TestFileSystemProvider_ProvideFiles_Success_ShouldProcessAllFileIfNoFilterI
 	processor := newMockFileProcessor(t)
 	processor.On("ProcessFile", mock.Anything, mock.Anything).Return(nil)
 
-	provider := scaffold.NewFileSystemProvider(filepath.Join("testdata", "file_system_provider"))
+	provider := providers.NewFileSystemProvider(filepath.Join("testdata", "file_system_provider"))
 	err := provider.ProvideFiles(filter, processor)
 	assert.Nil(t, err)
 
@@ -55,7 +55,7 @@ func TestFileSystemProvider_ProvideFiles_Success_ShouldProcessAllFileIfFilterAcc
 	processor := newMockFileProcessor(t)
 	processor.On("ProcessFile", mock.Anything, mock.Anything).Return(nil)
 
-	provider := scaffold.NewFileSystemProvider(filepath.Join("testdata", "file_system_provider"))
+	provider := providers.NewFileSystemProvider(filepath.Join("testdata", "file_system_provider"))
 	err := provider.ProvideFiles(filter, processor)
 	assert.Nil(t, err)
 
@@ -70,7 +70,7 @@ func TestFileSystemProvider_ProvideFiles_Success_ShouldNotProcessFilesIgnoredByT
 	processor := newMockFileProcessor(t)
 	processor.On("ProcessFile", mock.Anything, mock.Anything).Return(nil)
 
-	provider := scaffold.NewFileSystemProvider(filepath.Join("testdata", "file_system_provider"))
+	provider := providers.NewFileSystemProvider(filepath.Join("testdata", "file_system_provider"))
 	err := provider.ProvideFiles(filter, processor)
 	assert.Nil(t, err)
 

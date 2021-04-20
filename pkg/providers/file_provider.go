@@ -1,4 +1,4 @@
-package scaffold
+package providers
 
 import (
 	"github.com/pasdam/go-scaffold/pkg/filters"
