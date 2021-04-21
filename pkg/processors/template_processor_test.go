@@ -5,6 +5,7 @@ import (
 	"io"
 	"strings"
 	"testing"
+	"text/template"
 
 	"github.com/pasdam/go-scaffold/pkg/core"
 	"github.com/pasdam/go-scaffold/pkg/templates"
@@ -15,6 +16,7 @@ import (
 func TestNewTemplateProcessor(t *testing.T) {
 	type args struct {
 		data          interface{}
+		funcMap       template.FuncMap
 		nextProcessor core.Processor
 	}
 	tests := []struct {
@@ -24,7 +26,8 @@ func TestNewTemplateProcessor(t *testing.T) {
 		{
 			name: "Should create instance with specified fields",
 			args: args{
-				data: "some-data",
+				data:    "some-data",
+				funcMap: template.FuncMap{},
 				nextProcessor: &templateProcessor{
 					data: "some-mock-processor",
 				},
@@ -33,9 +36,10 @@ func TestNewTemplateProcessor(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := NewTemplateProcessor(tt.args.data, tt.args.nextProcessor).(*templateProcessor)
+			got := NewTemplateProcessor(tt.args.data, tt.args.nextProcessor, tt.args.funcMap).(*templateProcessor)
 
 			assert.Equal(t, tt.args.data, got.data)
+			assert.Equal(t, tt.args.funcMap, got.funcMap)
 			assert.Equal(t, tt.args.nextProcessor, got.nextProcessor)
 		})
 	}
@@ -88,11 +92,12 @@ func Test_templateProcessor_ProcessFile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &templateProcessor{
 				data:          tt.name,
+				funcMap:       template.FuncMap{},
 				nextProcessor: &mockProcessor{err: tt.mocks.nextProcessorErr},
 			}
 			var wantErr error
 			processedReader := strings.NewReader(tt.name)
-			stub := mockit.MockFunc(t, templates.ProcessTemplate).With(tt.args.reader, p.data)
+			stub := mockit.MockFunc(t, templates.ProcessTemplate).With(tt.args.reader, p.data, p.funcMap)
 			if tt.mocks.processTemplateErr != nil {
 				wantErr = tt.mocks.processTemplateErr
 				stub.Return(nil, wantErr)

@@ -1,1 +1,1 @@
-This is a {{ .Text }}
+This is a {{ Bold .Text }}

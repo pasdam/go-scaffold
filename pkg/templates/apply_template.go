@@ -5,8 +5,8 @@ import (
 	"text/template"
 )
 
-func applyTemplate(templateContent string, config interface{}) (string, error) {
-	template, err := template.New("").Parse(templateContent)
+func applyTemplate(templateContent string, config interface{}, funcMap template.FuncMap) (string, error) {
+	template, err := template.New("").Funcs(funcMap).Parse(templateContent)
 	if err != nil {
 		return "", err
 	}
