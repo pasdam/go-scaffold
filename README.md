@@ -127,3 +127,19 @@ custom commands.
 
 The app will automatically execute the file
 `<template_dir>/.go-scaffold/initScript`.
+
+## TODO:
+
+- fix readme and example
+- post render script
+- manifest structure
+- load JSON data
+- generate multiple files from a single one (i.e for ranges)
+- openapi generator cmd
+- validate manifest and values
+- add custom data objects
+- gitignore file
+- template functions
+- open files
+- subcharts
+- override chart template file(s)

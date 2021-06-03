@@ -1,6 +1,7 @@
 module github.com/pasdam/go-scaffold
 
 require (
+	github.com/iancoleman/strcase v0.1.3
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pasdam/go-files-test v0.0.0-20210125082053-e1c8203c662c
 	github.com/pasdam/go-io-utilx v0.0.0-20210125081100-08a73663a45e
